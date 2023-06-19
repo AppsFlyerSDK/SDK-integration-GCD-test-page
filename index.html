@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href="/">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    foo {
+      background: black;
+    }
+  </style>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+    integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+    integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div>
+    <img src="images/appsflyerlogo.png" alt="AppsFlyer logo" width="30%">
+  </div>
+  <h1 class="primary-heading">
+    Welcome to AppsFlyer test page
+  </h1>
+  <div>
+    <input type="radio" id="android_check" name="app_id_check" value="androidCheck" onclick="chooseAndroidApp()"
+      checked>
+    <label for="android_check"> Android</label><br>
+    <input type="radio" id="ios_check" name="app_id_check" value="iosCheck" onclick="chooseIOSApp()">
+    <label for="ios_check"> iOS</label><br>
+    <h3 id="app_id_headline">Enter Android package name</h3>
+    <input onchange="changeQRCode(value)" id="app_id" placeholder="com.mycompany.myapp" name="appIdInput"
+      class="input_value" />
+  </div>
+  <div>
+    <h3>Enter Dev Key</h3>
+    <input id="dev_key" placeholder="ABCDEw4F78vGTeTuY12345" class="input_value" />
+  </div>
+  <div>
+    <h3>Scan this QR code</h3>
+    <div id="qrcode"></div>
+  </div>
+  <div class="copy-container">
+    <input type="text" id="qrcode_url" placeholder="Url will be displayed here" class="copy-text" readonly>
+    <button id="copy_url_button" class="copy-button">Copy</button>
+  </div>
+  <div>
+    <h3>Install your app locally</h3>
+  </div>
+  <div>
+    <h3>Enter your UID. Learn how
+      <a href="https://dev.appsflyer.com/hc/docs/testing-android#inspect-conversion-data">here.</a>
+    </h3>
+    <input id="device_id" placeholder="1684444557828-4865448487570048658" class="input_value" />
+  </div>
+  <div>
+    <input type="button" value="Test result" class="code_button" onclick="runCalcHmacCode()" />
+  </div>
+  <div class="output_url-container">
+    <h3>Your result</h3>
+    <textarea id="output_url"></textarea>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script type="text/javascript">
+
+    // const variables
+    const outputUrl = document.getElementById('output_url')
+    const appIdHeadline = document.getElementById('app_id_headline')
+    const appIDInput = document.getElementById("app_id");
+    const qrcodeUrl = document.getElementById("qrcode_url");
+    const copyButton = document.getElementById('copy_url_button');
+    const copyText = document.getElementById('qrcode_url');
+
+    let chosenOS = 'android';
+
+    // pid for the current click
+    const mediaSource = 'devtest' + (Math.floor(Math.random() * 90000) + 10000).toString()
+
+    let qrcode = new QRCode(document.getElementById("qrcode"), {
+      text: "http://jindo.dev.naver.com/collie",
+      width: 128,
+      height: 128,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    copyButton.addEventListener('click', function () {
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("Text copied to clipboard!");
+    });
+
+    function isValidAppID(str) {
+      // Define the regular expression pattern
+      let pattern = /^([A-Za-z]{1}[A-Za-z\d_]*\.)+[A-Za-z][A-Za-z\d_]*$/;
+
+      if (chosenOS === 'ios'){
+        pattern = /^id\d{9}$|^id\d{10}$/
+      }
+        // Test the string against the pattern
+        return pattern.test(str);
+    }
+
+
+    function isValidDevKey(str) {
+      // Define the regular expression pattern
+      var pattern = /^[a-zA-Z0-9]{22}$/;
+      // Test the string against the pattern
+      return pattern.test(str);
+    }
+
+    function isValidDeviceID(str) {
+      // Define the regular expression pattern
+      let pattern = /^\d{13}-\d{19}$/;
+
+      if (chosenOS === 'ios'){
+        pattern = /^\d{13}-\d{7}$/
+      }
+        // Test the string against the pattern
+        return pattern.test(str);
+    }
+
+    function changeQRCode(value) {
+      qrcode.clear();
+      const url = 'https://app.appsflyer.com/' + value + '?pid=' + mediaSource;
+      qrcode.makeCode(url);
+      qrcodeUrl.value = url;
+    }
+
+    function chooseAndroidApp() {
+      chosenOS = 'android'
+      appIdHeadline.innerText = 'Enter Android Package Name';
+      appIDInput.placeholder = 'com.mycompany.myapp';
+    }
+
+    function chooseIOSApp() {
+      chosenOS = 'ios'
+      appIdHeadline.innerText = 'Enter iOS App ID';
+      appIDInput.placeholder = 'id1234567899';
+      ;
+    }
+
+    function runCalcHmacCode() {
+
+      let appId = document.getElementById("app_id").value
+      let deviceId = document.getElementById("device_id").value
+      let devKey = document.getElementById("dev_key").value
+
+      if (!isValidAppID(appId)) {
+        alert("Invalid App Id or Package Name, Please check again and choose the correct OS.")
+        return;
+      }
+
+      if (!isValidDevKey(devKey)) {
+        alert("Invalid Dev key, Please check again.")
+        return;
+      }
+
+      if (!isValidDeviceID(deviceId)) {
+        alert("Invalid UID, Please check again.")
+        return;
+      }
+
+      // call to the proxy server - change local host 30000 to the domain
+      const url = 'http://localhost:3000/?appid=' + appId + '&device_id=' + deviceId + '&devkey=' + devKey;
+
+      // call without the proxy server
+      // const url = 'https://gcdsdk.appsflyer.com/install_data/v4.0/'+appId+'?devkey='+ devKey +'&device_id=' + deviceId
+
+      fetch(url, {})
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(response.status);
+          }
+          return response.json();
+        })
+        .then(response => {
+          console.log(response);
+          if (response['status_code'] === 404) {
+            throw new Error(response['status_code']);
+          }
+          if (response['media_source'] !== mediaSource) {
+            outputUrl.innerText = "You got incorrect media source. Let's try again."
+            return
+          }
+          if (response['af_status'] === 'Non-organic') {
+            outputUrl.innerText = 'Great job! You got non-organic install!'
+            return
+          }
+          if (response['af_status'] === 'Organic') {
+            outputUrl.innerText = "You got organic install. Let's try again"
+          }
+
+        })
+        .catch(error => {
+          if (error.message === '404') {
+            outputUrl.innerText = 'Attribution data for this AppsFlyer ID is not available.';
+          } else {
+            outputUrl.innerText = 'Unexpected server error occurred.';
+          }
+          console.error(error);
+        });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+/* CSS files add styling rules to your content */
+
+body {
+  font-family: helvetica, arial, sans-serif;
+  padding: 30px;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+h1 {
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 50px;
+  color: #00a0e0;
+}
+
+h2 {
+  font-family: sans-serif;
+  font-style: normal;
+  font-size: 45px;
+  color: gray;
+}
+
+.present_url {
+  word-break: break-all;
+  position: relative;
+  padding: 30px;
+  border: 1px solid gray;
+  border-radius: 15px;
+  font-size: 30px;
+  height: 100px;
+}
+
+.input_value {
+  width: 40%;
+  height: 100%;
+}
+
+.output_url-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#qrcode {
+  width:160px;
+  height:160px;
+  margin-top:15px;
+}
+
+#output_url {
+  width: 40%;
+  height: 100%;
+}
+
+.code_button {
+  background-color: #5baac7; /* Green */
+  border: none;
+  color: white;
+  padding: 5px 22px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.code_button:active {
+  background: #2f6072;
+  -webkit-box-shadow: inset 0px 0px 5px #5baac7;
+     -moz-box-shadow: inset 0px 0px 5px #5baac7;
+          box-shadow: inset 0px 0px 5px #5baac7;
+   outline: none;
+}
+
+.copy-container {
+  display: flex;
+  width: 40%;
+  align-items: center;
+}
+
+.copy-text {
+  margin-right: 1px;
+  width: 500px;
+  padding: 5px;
+  border: 2px solid #ccc;
+}
+
+.copy-button {
+  padding: 5px 5px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
