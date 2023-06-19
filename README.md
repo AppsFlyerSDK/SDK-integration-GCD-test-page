@@ -1,1 +1,1 @@
-This repository is for testing AppsFlyer SDK integration.
+Test page for a successful SDK integration
