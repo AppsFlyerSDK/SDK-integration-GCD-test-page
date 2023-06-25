@@ -168,10 +168,10 @@
       }
 
       // call to the proxy server - change local host 30000 to the domain
-      const url = 'http://localhost:3000/?appid=' + appId + '&device_id=' + deviceId + '&devkey=' + devKey;
+      //const url = 'http://localhost:3000/?appid=' + appId + '&device_id=' + deviceId + '&devkey=' + devKey;
 
       // call without the proxy server
-      // const url = 'https://gcdsdk.appsflyer.com/install_data/v4.0/'+appId+'?devkey='+ devKey +'&device_id=' + deviceId
+      const url = 'https://gcdsdk.appsflyer.com/install_data/v4.0/'+appId+'?devkey='+ devKey +'&device_id=' + deviceId
 
       fetch(url, {})
         .then(response => {
